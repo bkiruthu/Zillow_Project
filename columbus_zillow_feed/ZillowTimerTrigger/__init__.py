@@ -54,7 +54,7 @@ def rapid_api():
                     'maxPrice': str(yaml_content['maxPrice']),
                     'bedsMin': str(yaml_content['bedsMin']),
                     'bathsMin': str(yaml_content['bathsMin']),
-                    'sqftMin': str(yaml_content['bathsMin'])
+                    'sqftMin': str(yaml_content['sqftMin'])
 
                     }
         headers = {
