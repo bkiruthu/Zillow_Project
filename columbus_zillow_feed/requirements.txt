@@ -12,3 +12,4 @@ azure-identity==1.4.0
 azure-storage-blob==12.4.0
 azure-keyvault-secrets==4.2.0
 pandas
+PyYAML
