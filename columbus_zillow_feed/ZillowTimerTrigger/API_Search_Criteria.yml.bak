@@ -12,4 +12,3 @@ maxPrice: '550000'
 bedsMin:  '3'
 bathsMin: '2'
 sqftMin: '1500'
-Container: zillow-columbus

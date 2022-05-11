@@ -27,11 +27,19 @@ secret_client = SecretClient(
 )
 
 
-# get rapid-api-key from azure key vault
+# get snowflake credentials from azure key vault
 
 SFUser = secret_client.get_secret(name='SFUser').value
-
 SFPassword = secret_client.get_secret(name='SFPassword').value
+
+   # Grab the Blob Connection String, from our Azure Key Vault.
+blob_conn_string = secret_client.get_secret(name='blob-storage-connection-string')
+
+# Connect to the Container.
+container_client = ContainerClient.from_connection_string(
+    conn_str=blob_conn_string.value,
+    container_name='zillow-columbus'
+)
 # from azure.storage.blob import BlobServiceClient,generate_blob_sas,BlobSasPermissions
 
 
