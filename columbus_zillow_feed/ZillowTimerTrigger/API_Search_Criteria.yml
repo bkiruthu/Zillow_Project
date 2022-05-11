@@ -1,0 +1,14 @@
+Profile: North_Columbus
+State: OH
+Cities:
+  - Worthington
+  - Dublin
+  - "New Albany"
+  - Westerville
+  - Powell
+Home_Type: Houses
+minPrice: '350000'
+maxPrice: '550000'
+bedsMin:  '3'
+bathsMin: '2'
+sqftMin: '1500'
