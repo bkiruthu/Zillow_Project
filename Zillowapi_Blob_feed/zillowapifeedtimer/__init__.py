@@ -144,8 +144,10 @@ def main(mytimer: func.TimerRequest) -> None:
 
     
     # Create a dynamic filename.
-    filename = str(yaml_content['Profile']) + "_on_sale_{ts}.json".format(
-        ts=datetime.datetime.now().timestamp()
+    filename =  "{date}/{prf}_on_sale_{ts}.json".format(
+        ts=datetime.datetime.now().strftime("%m_%d_%y_%H%M"), 
+        prf = str(yaml_content['Profile']),
+        date = datetime.datetime.now().strftime("%Y/%m/%d")
     )
 
     # Create a new Blob.

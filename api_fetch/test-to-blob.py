@@ -117,55 +117,28 @@ def prop_details():
     return json_string
 
 
+# Grab the Blob Connection String, from our Azure Key Vault.
+blob_conn_string = key_vault().get_secret(
+    name='blob-storage-connection-string'
+)
+#get config details from yaml file
+yaml_file =open(os.path.join(os.path.dirname(__file__),'config_files/API_Search_Criteria.yml'))
+yaml_content = yaml.full_load(yaml_file)
+# Connect to the Container.
+container_client = ContainerClient.from_connection_string(
+    conn_str=blob_conn_string.value,
+    container_name=str(yaml_content['Container'])
+)
 
-def main(mytimer: func.TimerRequest) -> None:
-    uutc_timestamp = datetime.datetime.utcnow().replace(
-        tzinfo=datetime.timezone.utc).isoformat()
+# Create a dynamic filename.
+filename = str(yaml_content['Profile']) + "_on_sale_{ts}.json".format(
+    ts=datetime.datetime.now().timestamp()
+)
+# Create a new Blob.
+container_client.upload_blob(
+    name=filename,
+    data=prop_details(),
+    blob_type="BlockBlob"
+)
 
-    if mytimer.past_due:
-        logging.info('The timer is past due!')
-
-    logging.info('Python timer trigger function ran at %s')
-
-
-    # Grab the Blob Connection String, from our Azure Key Vault.
-    blob_conn_string = key_vault().get_secret(
-        name='blob-storage-connection-string'
-    )
-    #get config details from yaml file
-    yaml_file =open(os.path.join(os.path.dirname(__file__),'config_files/API_Search_Criteria.yml'))
-    yaml_content = yaml.full_load(yaml_file)
-
-    # Connect to the Container.
-    container_client = ContainerClient.from_connection_string(
-        conn_str=blob_conn_string.value,
-        container_name=str(yaml_content['Container'])
-    )
-
-    
-    # Create a dynamic filename.
-    filename = str(yaml_content['Profile']) + "_on_sale_{ts}.json".format(
-        ts=datetime.datetime.now().timestamp()
-    )
-
-    # Create a new Blob.
-    container_client.upload_blob(
-        name=filename,
-        data=prop_details(),
-        blob_type="BlockBlob"
-    )
-
-    logging.info('File loaded to Azure Successfully...')
-
-    # Grab the UTC Timestamp.
-    utc_timestamp = datetime.datetime.utcnow().replace(
-        tzinfo=datetime.timezone.utc
-    ).isoformat()
-
-    # Send message if Past Due.
-    if mytimer.past_due:
-        logging.info('The timer is past due!')
-
-    # Otherwise let the user know it ran.
-    logging.info('Python timer trigger function ran at %s', utc_timestamp)
 
