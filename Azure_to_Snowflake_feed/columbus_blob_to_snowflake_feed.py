@@ -4,8 +4,7 @@ import time
 import requests
 import os
 import json
-import yaml
-import pandas as pd
+
 import snowflake.connector as snowflake
 
 from azure.storage.blob import ContainerClient
@@ -90,13 +89,35 @@ ctx = snowflake.connect(
     account='il77660.west-us-2.azure',
     password=SFPassword,
     warehouse='etl_dev_wh',
-    database='SNOWFLAKE_SAMPLE_DATA',
-    schema='TPCH_SF100'
+    database='ZILLOWDB',
+    schema='RAW'
     )
 
 try:
     # using the snowflake connector object execute a SQL statement against TPCH Demo Database
-    resultset = ctx.cursor().execute("SELECT C_CUSTKEY as C_CUSTKEY, C_NAME AS C_NAME,C_ACCTBAL AS C_ACCTBAL FROM CUSTOMER LIMIT 10")
+    resultset = ctx.cursor().execute(
+                """copy into North_COLUMBUS_SALES_RAW 
+                    FROM (select 
+                        $1:zpid,
+                        $1:datePosted,
+                        $1:zipcode,
+                        $1:state, 
+                        $1:city,
+                        $1:bedrooms,
+                        $1:bathrooms,
+                        $1:yearBuilt,
+                        $1:price,
+                        $1:zestimate,
+                        $1:livingArea,
+                        $1:mortgageRates:thirtyYearFixedRate,
+                        'BGK Python ETL Ingestion',
+                        current_timestamp()
+                        from @my_azure_stage/{dt}/)
+                    FILE_FORMAT = (FORMAT_NAME = ZILLOW_FORMAT)
+                    PATTERN = '.*[.]json'""".format(
+                            dt= datetime.datetime.now().strftime("%Y/%m/%d")
+                        )
+                    )
     
     df = resultset.fetchall()
     
