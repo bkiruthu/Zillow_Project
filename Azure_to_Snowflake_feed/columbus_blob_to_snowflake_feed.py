@@ -55,7 +55,7 @@ container_client = ContainerClient.from_connection_string(
 
 # sas = generate_sas_token("raw-area/moviesDB.csv")
 
-# # Connectio string
+# # Connection string
 
 # conn = snowflake.connector.connect(user='xx',password='xx@123',account='xx.southeast-asia.azure',database='xx')
 
@@ -112,9 +112,9 @@ try:
                         $1:mortgageRates:thirtyYearFixedRate,
                         'BGK Python ETL Ingestion',
                         current_timestamp()
-                        from @my_azure_stage/{dt}/)
+                        from @my_azure_stage/)
                     FILE_FORMAT = (FORMAT_NAME = ZILLOW_FORMAT)
-                    PATTERN = '.*[.]json'""".format(
+                    PATTERN = '.*/.*/.*/.*[.]json'""".format(
                             dt= datetime.datetime.now().strftime("%Y/%m/%d")
                         )
                     )
